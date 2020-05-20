@@ -11,51 +11,56 @@ Guarda se o campo é obrigatório em um atributo novo "xrequired".
 @PARAM: @fieldID = identificador do campo/campos.
 Ex de chamada: sml_Hide('nome,cpf');
 */
-function sml_Hide(fieldID) {
-    if (fieldID !==  "" && fieldID !==  null && fieldID !==  undefined) {
+function sml_Hide(fieldID, clean) {
+    if (fieldID !== "" && fieldID !== null && fieldID !== undefined) {
         var field;
         if (fieldID.indexOf(",") >= 0) {
             var Ids = fieldID.replace(' ', '');
             var arrayIds = Ids.split(',');
 
             for (var i = 0; i < arrayIds.length; i++) {
-                field = $('inp:' + arrayIds[i]);
+                field = $('inp:' + $.trim(arrayIds[i]));
 
-                if (field.attr('type') !==  'hidden') {
+                if (field.attr('type') !== 'hidden') {
                     field.closest('tr').hide();
                 } else {
-                    $('#td0' + arrayIds[i]).hide();
-                    $('#td1' + arrayIds[i]).hide();
+                    $('#td0' + $.trim(arrayIds[i])).hide();
+                    $('#td1' + $.trim(arrayIds[i])).hide();
                 }
 
                 if (field.attr('xrequired') === undefined)
                     field.attr('xrequired', field[0].getAttribute('required'));
 
-                if (field.attr('type') !==  'hidden')
+                if (field.attr('type') !== 'hidden')
                     field[0].setAttribute('required', 'N');
 
-                if (field.is('input')) {
-                    if (field.attr('type') === 'text') {
+                if (clean) {
+
+                    if (field.is('input')) {
+                        if (field.attr('type') === 'text') {
+                            field.val('');
+                        } else if (field.attr('type') === 'radio' || field.attr('type') === 'checkbox') {
+                            field.prop('checked', false);
+                        }
+                    } else if (field.is('select') || field.is('textarea')) {
                         field.val('');
-                    } else if (field.attr('type') === 'radio' || field.attr('type') === 'checkbox') {
-                        field.prop('checked', false);
                     }
-                } else if (field.is('select') || field.is('textarea')) {
-                    field.val('');
+
                 }
+
             }
         } else {
-            field = $('inp:' + fieldID);
-            if (field.attr('type') !==  'hidden') {
+            field = $('inp:' + $.trim(fieldID));
+            if (field.attr('type') !== 'hidden') {
                 field.closest('tr').hide();
             } else {
-                $('#td0' + fieldID).hide();
-                $('#td1' + fieldID).hide();
+                $('#td0' + $.trim(fieldID)).hide();
+                $('#td1' + $.trim(fieldID)).hide();
             }
             if (field.attr('xrequired') === undefined)
                 field.attr('xrequired', field[0].getAttribute('required'));
 
-            if (field.attr('type') !==  'hidden')
+            if (field.attr('type') !== 'hidden')
                 field[0].setAttribute('required', 'N');
 
             if (field.is('input')) {
@@ -80,27 +85,40 @@ Resgata se o campo é obrigatório atraves do atributo novo "xrequired".
 Ex de chamada: sml_Show('nome,cpf');
 */
 function sml_Show(fieldID) {
-    var field;
+    if (fieldID !== "" && fieldID !== null && fieldID !== undefined) {
+        var field;
 
-    if (fieldID !==  "" && fieldID !==  null && fieldID !==  undefined) {
-        
         if (fieldID.indexOf(",") >= 0) {
             var Ids = fieldID.replace(' ', '');
             var arrayIds = Ids.split(',');
+
             for (var i = 0; i < arrayIds.length; i++) {
-                field = $('inp:' + arrayIds[i]);
-                field.closest('tr').show();
-                if (field.attr("type") !==  '' && field[0].getAttribute('xrequired') !==  null)
+                field = $('inp:' + $.trim(arrayIds[i]));
+
+                if (field.attr('type') !== 'hidden') {
+                    field.closest('tr').show();
+                } else {
+                    $('#td0' + $.trim(arrayIds[i])).show();
+                    $('#td1' + $.trim(arrayIds[i])).show();
+                }
+
+                if (field.attr("type") !== '' && field[0].getAttribute('xrequired') !== null)
                     field[0].setAttribute('required', field[0].getAttribute('xrequired'));
             }
 
         } else {
-            field = $('inp:' + fieldID);
-            field.closest('tr').show();
-            if (field[0].getAttribute('xrequired') !==  null)
+            field = $('inp:' + $.trim(fieldID));
+
+            if (field.attr('type') !== 'hidden') {
+                field.closest('tr').show();
+            } else {
+                $('#td0' + $.trim(fieldID)).show();
+                $('#td1' + $.trim(fieldID)).show();
+            }
+
+            if (field[0].getAttribute('xrequired') !== null)
                 field[0].setAttribute('required', field[0].getAttribute('xrequired'));
         }
-
         return field;
     }
 }
@@ -141,29 +159,30 @@ function sml_hideTables(ids, clean) {
             var $this = $(this);
             var type = $(this).attr("type");
 
-            if (type === undefined || type !==  "button") {
+            if (type === undefined || type !== "button") {
                 var isrequired =
                     (
-                        ($(this).attr("data-isrequired") !==  null && $(this).attr("data-isrequired") === "true")
-                        || ($(this)[0].getAttribute("required") !==  null && $(this)[0].getAttribute("required") === "S")
+                        ($(this).attr("data-isrequired") !== null && $(this).attr("data-isrequired") === "true")
+                        || ($(this)[0].getAttribute("required") !== null && $(this)[0].getAttribute("required") === "S")
                     ) ? true : false;
                 $(this).attr("data-isrequired", isrequired);
                 $(this)[0].setAttribute("required", "N");
                 $(this).attr("class", "");
 
-                if (clean && $(this).val() !==  "0,00")
+                if (clean && $(this).val() !== "0,00")
                     $(this).val("");
             }
         });
     }
-    if (ids !==  "") {
+
+    if (ids !== "") {
         if (ids.indexOf(',') >= 0) {
             var arrayIds = ids.split(',');
             for (var i = 0; i < arrayIds.length; i++) {
-                hideTablesProcess(arrayIds[i], clean);
+                hideTablesProcess($.trim(arrayIds[i]), clean);
             }
         } else {
-            hideTablesProcess(ids, clean);
+            hideTablesProcess($.trim(ids), clean);
         }
     }
 }
@@ -181,23 +200,23 @@ function sml_showTables(ids) {
 
         var i = 0;
         var $tbl = $("table[id='" + id + "']");
-        var wasrequired;
         $tbl.show();
 
         $tbl.find('input, select, textarea').each(function () {
             var $this = $(this);
             var type = $(this).attr("type");
+            var wasrequired;
 
-            if (type !==  undefined && type !==  "button" && type !==  "hidden") {
+            if (type !== undefined && type !== "button" && type !== "hidden") {
                 wasrequired = $(this).attr("data-isrequired");
-                if (wasrequired !==  null && wasrequired === "true") {
+                if (wasrequired !== null && wasrequired === "true") {
                     $this[0].setAttribute("required", "S");
                     $this.parents("td").attr("class", "obrigatorio");
                 }
             }
             if ($(this).is('select')) {
                 wasrequired = $(this).attr("data-isrequired");
-                if (wasrequired !==  null && wasrequired === "true") {
+                if (wasrequired !== null && wasrequired === "true") {
                     $this[0].setAttribute("required", "S");
                     $this.parents("td").attr("class", "obrigatorio");
                 }
@@ -205,14 +224,14 @@ function sml_showTables(ids) {
         });
     }
 
-    if (ids !==  "") {
+    if (ids !== "") {
         if (ids.indexOf(',') >= 0) {
             var arrayIds = ids.split(',');
             for (var i = 0; i < arrayIds.length; i++) {
-                showTablesProcess(arrayIds[i]);
+                showTablesProcess($.trim(arrayIds[i]));
             }
         } else {
-            showTablesProcess(ids);
+            showTablesProcess($.trim(ids));
         }
     }
 }
@@ -314,17 +333,17 @@ function sml_checkCNPJ(Obj) {
     cnpj = Obj.value.replace(/\./gi, "").replace(/\//gi, "").replace(/-/gi, "");
     console.log(cnpj);
 
-    if (!cnpj || cnpj.length !== 14
-        || cnpj === "00000000000000"
-        || cnpj === "11111111111111"
-        || cnpj === "22222222222222"
-        || cnpj === "33333333333333"
-        || cnpj === "44444444444444"
-        || cnpj === "55555555555555"
-        || cnpj === "66666666666666"
-        || cnpj === "77777777777777"
-        || cnpj === "88888888888888"
-        || cnpj === "99999999999999") {
+    if (!cnpj || cnpj.length != 14
+        || cnpj == "00000000000000"
+        || cnpj == "11111111111111"
+        || cnpj == "22222222222222"
+        || cnpj == "33333333333333"
+        || cnpj == "44444444444444"
+        || cnpj == "55555555555555"
+        || cnpj == "66666666666666"
+        || cnpj == "77777777777777"
+        || cnpj == "88888888888888"
+        || cnpj == "99999999999999") {
         sml_appendMessageField(Obj, "CNPJ inválido!", "spanCnpjMessage", false);
         $(Obj).val('');
         return false;
@@ -344,7 +363,7 @@ function sml_checkCNPJ(Obj) {
 
     var resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
 
-    if (resultado !== digitos.charAt(0)) {
+    if (resultado != digitos.charAt(0)) {
         sml_appendMessageField(Obj, "CNPJ inválido!", "spanCnpjMessage", false);
         $(Obj).val('');
         return false;
@@ -363,7 +382,7 @@ function sml_checkCNPJ(Obj) {
 
     resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
 
-    if (resultado !== digitos.charAt(1)) {
+    if (resultado != digitos.charAt(1)) {
         sml_appendMessageField(Obj, "CNPJ inválido!", "spanCnpjMessage", false);
         $(Obj).val('');
         return false;
