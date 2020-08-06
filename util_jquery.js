@@ -102,7 +102,7 @@ function sml_Show(fieldID) {
                     $('#td1' + $.trim(arrayIds[i])).show();
                 }
 
-                if (field.attr("type") !== '' && field[0].getAttribute('xrequired') !== null)
+                if (field.attr("type") != '' && field.attr('type') != 'hidden' && field[0].getAttribute('xrequired') != null)
                     field[0].setAttribute('required', field[0].getAttribute('xrequired'));
             }
 
@@ -116,7 +116,7 @@ function sml_Show(fieldID) {
                 $('#td1' + $.trim(fieldID)).show();
             }
 
-            if (field[0].getAttribute('xrequired') !== null)
+            if (field.attr("type") != '' && field.attr("type") != 'hidden' && field[0].getAttribute('xrequired') != null)
                 field[0].setAttribute('required', field[0].getAttribute('xrequired'));
         }
         return field;
@@ -492,6 +492,42 @@ function sml_ShowOrHideSelectOptions(selectId, selectValues, op, hasMultiple, ta
 
         }
 
+    }
+
+}
+
+/*
+ Função responsável por formatar o campo em telefone.
+ @PARAM: @$obj = objeto.
+ Ex de chamada: onkeyup="$(this).val(sml_PhoneMask($(this)));"
+ Ex de chamada: onblur="$(this).val(sml_PhoneMask($(this)));"
+ Ex de chamada: onchange="$(this).val(sml_PhoneMask($(this)));"
+*/
+function sml_PhoneMask($obj) {
+
+    var phoneNumber = $obj.val().replace(/[^\d]+/g, '');    //Somente Numeros.
+    var ddd;
+    var firstPhoneDigits;
+    var lastPhoneDigits;
+
+    if (phoneNumber !== "" && phoneNumber !== null && phoneNumber !== undefined) {
+        //Celular
+        if (phoneNumber.length > 10) {
+
+            ddd = phoneNumber.substr(0, 2);                 //Pega os 2 primeiros dígitos
+            firstPhoneDigits = phoneNumber.substr(2, 5);    //Pega os 5 primeiros dígitos após o ddd
+            lastPhoneDigits = phoneNumber.substr(-4);       //Pega os 4 últimos dígitos
+            phoneNumber = "(" + ddd + ") " + firstPhoneDigits + "-" + lastPhoneDigits;
+        //Fixo
+        } else if (phoneNumber.length === 10) {
+
+            ddd = phoneNumber.substr(0, 2);                 //Pega os 2 primeiros dígitos
+            firstPhoneDigits = phoneNumber.substr(2, 4);    //Pega os 4 primeiros dígitos após o ddd
+            lastPhoneDigits = phoneNumber.substr(-4);       //Pega os 4 últimos dígitos
+            phoneNumber = "(" + ddd + ") " + firstPhoneDigits + "-" + lastPhoneDigits;
+
+        }
+        return phoneNumber;
     }
 
 }
