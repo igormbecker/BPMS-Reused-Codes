@@ -8,6 +8,35 @@ window.addEventListener("load", function () {
 });
 
 /*
+ * Desenvolvedor: Igor Becker
+Realiza as Regras da Página apos carregamento do formulario
+@PARAM: @task = Apelido da tarefa.
+Ex de chamada: sml_RulesOfPageLoadByTask(document.getElementById('inpDsFlowElementAlias').value);
+*/
+function sml_RulesOfPageLoadByTask(task) {
+    var tablesToHide;
+    var fieldsToHide;
+
+    switch (task.toUpperCase()) {
+
+        case "START":
+            tablesToHide = `tblColaboradores,
+                            Endereço`;
+            fieldsToHide = "";
+
+            sml_HideTables(tablesToHide);
+
+            break;
+
+        default:
+            break;
+
+    }
+
+}
+
+/*
+ * Desenvolvedor: Igor Becker
 Esconde uma tabela/agrupamento inteiro, desobriga seus campos e limpa o valor se necessário.
 Guarda se os campos da tabela são obrigatórios em um novo atributo "data-isrequired";
 @PARAM: @ids = identificador da tabela/tabelas.
@@ -21,7 +50,7 @@ function sml_HideTables(tableIds, clean) {
         var i = 0;
         var tbl = document.getElementById(id);
 
-        tbl.style.visibility = "hidden";
+        tbl.style.display = "none";
 
         if (clean) {
             if (tbl.getAttribute("mult") == "S") {
@@ -38,6 +67,7 @@ function sml_HideTables(tableIds, clean) {
             Array.from(tbl.tBodies[0].rows).forEach(row => {
                 var inputs = row.querySelectorAll('input');
                 var selects = row.querySelectorAll('select');
+                var textareas = row.querySelectorAll('textarea');
 
                 //Apaga os valores dos inputs
                 if (inputs) {
@@ -63,7 +93,12 @@ function sml_HideTables(tableIds, clean) {
                         obj.value = '';
                     });
                 }
-
+                //Faz as regras para os textareas
+                if (textareas) {
+                    Array.from(selects).forEach(obj => {
+                        obj.value = '';
+                    });
+                }
             });
         }
 
@@ -71,6 +106,7 @@ function sml_HideTables(tableIds, clean) {
         Array.from(tbl.tBodies[0].rows).forEach(row => {
             var inputs = row.querySelectorAll('input');
             var selects = row.querySelectorAll('select');
+            var textareas = row.querySelectorAll('textarea');
             var isrequired = '';
 
             //Faz as regras para os inputs
@@ -94,6 +130,19 @@ function sml_HideTables(tableIds, clean) {
             //Faz as regras para os selects
             if (selects) {
                 Array.from(selects).forEach(obj => {
+                    isrequired =
+                        (
+                            (obj.getAttribute("data-isrequired") != null && obj.getAttribute("data-isrequired") == "true") ||
+                            (obj.getAttribute("required") != null && obj.getAttribute("required") == "S")
+                        ) ? true : false;
+
+                    obj.setAttribute("data-isrequired", isrequired);
+                    obj.setAttribute("required", "N");
+                });
+            }
+            //Faz as regras para os textareas
+            if (textareas) {
+                Array.from(textareas).forEach(obj => {
                     isrequired =
                         (
                             (obj.getAttribute("data-isrequired") != null && obj.getAttribute("data-isrequired") == "true") ||
@@ -128,6 +177,7 @@ function sml_HideTables(tableIds, clean) {
 }
 
 /*
+ * Desenvolvedor: Igor Becker
 Mostra uma tabela/agrupamento inteiro e obriga seus campos se eles forem obrigatórios.
 Resgata se os campos da tabela são obrigatórios em um novo atributo "data-isrequired";
 @PARAM: @ids = identificador da tabela/tabelas.
@@ -141,12 +191,13 @@ function sml_ShowTables(tableIds) {
         var i = 0;
         var tbl = document.getElementById(id);
 
-        tbl.style.visibility = "visible";
+        tbl.style.display = "";
 
         //Faz as regras de obrigatoriedade para cada campo da tabela
         Array.from(tbl.tBodies[0].rows).forEach(row => {
             var inputs = row.querySelectorAll('input');
             var selects = row.querySelectorAll('select');
+            var textareas = row.querySelectorAll('textarea');
             var wasrequired = '';
 
             //Faz as regras para os inputs
@@ -166,6 +217,15 @@ function sml_ShowTables(tableIds) {
             //Faz as regras para os selects
             if (selects) {
                 Array.from(selects).forEach(obj => {
+                    wasrequired = obj.getAttribute("data-isrequired");
+
+                    if (wasrequired != null && wasrequired == "true")
+                        obj.setAttribute("required", "S");
+                });
+            }
+            //Faz as regras para os selects
+            if (textareas) {
+                Array.from(textareas).forEach(obj => {
                     wasrequired = obj.getAttribute("data-isrequired");
 
                     if (wasrequired != null && wasrequired == "true")
@@ -195,50 +255,235 @@ function sml_ShowTables(tableIds) {
 }
 
 /*
-Realiza as Regras da Página apos carregamento do formulario
-@PARAM: @task = Apelido da tarefa.
-Ex de chamada: sml_RulesOfPageLoadByTask(document.getElementById('inpDsFlowElementAlias').value);
+ * Desenvolvedor: Igor Becker
+Função responsável por esconder e desobrigar um campo.
+Guarda se o campo é obrigatório em um atributo novo "xrequired".
+@PARAM: @fieldID = identificador do campo/campos.
+Ex de chamada: sml_Hide('nome,cpf');
 */
-function sml_RulesOfPageLoadByTask(task) {
-    var tablesToHide;
-    var fieldsToHide;
+function sml_Hide(fieldID) {
+    if (fieldID !== "" && fieldID !== null && fieldID !== undefined) {
+        var field;
+        var radioOrCheckFields;
+        var fieldType;
+        var tr;
+        var isrequired;
 
-    switch (task.toUpperCase()) {
+        //Verifica se existe mais de 1 id
+        if (fieldID.indexOf(",") >= 0) {
+            var Ids = fieldID.replace(' ', '');
+            var arrayIds = Ids.split(',');
 
-        case "START":
-            tablesToHide = `tblColaboradores,
-                            Endereço`;
-            fieldsToHide = "";
+            Array.from(arrayIds).forEach(id => {
+                field = document.querySelector('[xname="inp' + id.trim() + '"]');
+                fieldType = field.getAttribute("type") != null ? field.getAttribute("type") : field.type;
+                tr = sml_Closest(field, "tr");
+                isrequired =
+                    (
+                        (field.getAttribute("data-isrequired") != null && field.getAttribute("data-isrequired") == "true") ||
+                        (field.getAttribute("required") != null && field.getAttribute("required") == "S")
+                    ) ? true : false;
+                //Guarda a obrigatoriedade no novo atributo.
+                if (field.getAttribute('data-isrequired') == undefined)
+                    field.setAttribute('data-isrequired', isrequired);
 
-            sml_HideTables(tablesToHide);
+                if (fieldType != "hidden")
+                    field.setAttribute('required', 'N');
 
-            break;
+                //Se o elemento for diferente de botão ou hidden
+                if (fieldType && fieldType != "button" && fieldType != "hidden") {
 
-        default:
-            break;
+                    if (fieldType == "text")
+                        field.value = '';
 
+                    if (fieldType == "select")
+                        field.value = '';
+
+                    if (fieldType == "radio" || fieldType == "checkbox") {
+                        radioOrCheckFields = document.querySelectorAll('[xname="inp' + id.trim() + '"]');
+
+                        Array.from(radioOrCheckFields).forEach(f => {
+                            f.checked = false;
+                        });
+                    }
+                        
+
+                    if (fieldType == "textarea")
+                        field.value = '';
+                }
+
+                tr.style.display = "none";
+
+            });
+
+
+        } else {
+
+            field = document.querySelector('[xname="inp' + fieldID + '"]');
+            fieldType = field.getAttribute("type") != null ? field.getAttribute("type") : field.type;
+            tr = sml_Closest(field, "tr");
+            isrequired =
+                (
+                    (field.getAttribute("data-isrequired") != null && field.getAttribute("data-isrequired") == "true") ||
+                    (field.getAttribute("required") != null && field.getAttribute("required") == "S")
+                ) ? true : false;
+
+            //Guarda a obrigatoriedade no novo atributo.
+            if (field.getAttribute('data-isrequired') == undefined)
+                field.setAttribute('data-isrequired', isrequired);
+
+            //Remove a obrigatoriedade do campo
+            if (fieldType != "hidden")
+                field.setAttribute('required', 'N');
+
+            //Se o elemento for diferente de botão ou hidden
+            if (fieldType && fieldType != "button" && fieldType != "hidden") {
+
+                if (fieldType == "text")
+                    field.value = '';
+
+                if (fieldType == "select" || fieldType == "select-one")
+                    field.value = '';
+
+                if (fieldType == "radio" || fieldType == "checkbox") {
+                    radioOrCheckFields = document.querySelectorAll('[xname="inp' + id.trim() + '"]');
+
+                    Array.from(radioOrCheckFields).forEach(f => {
+                        f.checked = false;
+                    });
+                }
+
+                if (fieldType == "textarea")
+                    field.value = '';
+            }
+
+            tr.style.display = "none";
+
+            if (tr.getAttribute('class') != "group")
+                tr.setAttribute('class', 'NObrigatorio');
+        }
+    }
+}
+
+/*
+ * Desenvolvedor: Igor Becker
+Função responsável por mostrar e obrigar o campo se ele for obrigatório.
+Resgata se o campo é obrigatório atraves do atributo novo "xrequired".
+@PARAM: @fieldID = identificador do campo/campos.
+Ex de chamada: sml_Show('nome,cpf');
+*/
+function sml_Show(fieldID) {
+    if (fieldID !== "" && fieldID !== null && fieldID !== undefined) {
+        var field;
+        var fieldType;
+        var tr;
+        var isrequired;
+
+        //Verifica se existe mais de 1 id
+        if (fieldID.indexOf(",") >= 0) {
+            var Ids = fieldID.replace(' ', '');
+            var arrayIds = Ids.split(',');
+
+            Array.from(arrayIds).forEach(id => {
+                field = document.querySelector('[xname="inp' + id.trim() + '"]');
+                fieldType = field.getAttribute("type") != null ? field.getAttribute("type") : field.type;
+                tr = sml_Closest(field, "tr");
+                isrequired = field.getAttribute("data-isrequired");
+
+                if (isrequired == "true" && fieldType != "hidden")
+                    field.setAttribute('required', 'S');
+
+                tr.style.display = "";
+
+                if (isrequired == "true" && tr.getAttribute('class') != "group")
+                    tr.setAttribute('class', 'Obrigatorio');
+
+            });
+
+
+        } else {
+
+            field = document.querySelector('[xname="inp' + fieldID + '"]');
+            fieldType = field.getAttribute("type") != null ? field.getAttribute("type") : field.type;
+            tr = sml_Closest(field, "tr");
+            isrequired = field.getAttribute("data-isrequired");
+
+            //Remove a obrigatoriedade do campo
+            if (isrequired == "true" && fieldType != "hidden")
+                field.setAttribute('required', 'S');
+
+            tr.style.display = "";
+
+            if (isrequired == "true" && tr.getAttribute('class') != "group")
+                tr.setAttribute('class', 'Obrigatorio');
+        }
+    }
+}
+
+/*
+ * Desenvolvedor: Igor Becker
+Função para retornar o elemento mais proximo de um objeto.
+@PARAM: @obj = objeto.
+@PARAM: @el = elemento a retornar.
+Ex de chamada: sml_Closest(this, "tr");
+*/
+function sml_Closest(obj, el) {
+
+    if (obj) {
+
+        if (obj.nodeName == el.toUpperCase())
+            return obj;
+        else
+            return sml_Closest(obj.parentElement, "tr");
+
+    } else {
+        return null;
     }
 
 }
 
 /*
+ * Desenvolvedor: Igor Becker
 Esconde ou mostra uma tabela apos selecionar valor no campo
 @PARAM: @obj = Objeto.
 @PARAM: @tableId = identificador da tabela.
 @PARAM: @valToHide = Condicao para esconder tabela.
-Ex de chamada: onChange="sml_OnChange(this, 'tblEx', 'Não');"
+@PARAM: @tableOrField = Condicao para esconder tabela ou campo. Valores aceitos table ou field.
+Ex de chamada: onChange="sml_OnChange(this, 'tblExemplo', 'Não', 'table');"
 */
-function sml_OnChange(obj, tableId, valToHide) {
+function sml_OnChange(obj, ids, valToHide, tableOrField) {
 
-    if (obj.value != null && obj.value != "") {
+    if (obj.value != null && obj.value != "" && obj.value != undefined) {
 
-        if (obj.value == valToHide)
-            sml_HideTables(tableId, true);
-        else
-            sml_ShowTables(tableId);
+        if (obj.value == valToHide) {
+
+            if (tableOrField) {
+                if (tableOrField.toUpperCase() == "TABLE") 
+                    sml_HideTables(ids, true);
+                else
+                    sml_Hide(ids, true);
+            } else {
+                alert('Erro ao ocultar elemento: Informe se deseja ocultar uma tabela ou um campo!');
+            }
+
+        } else {
+            if (tableOrField) {
+                if (tableOrField.toUpperCase() == "TABLE")
+                    sml_ShowTables(ids);
+                else
+                    sml_Show(ids);
+            } else {
+                alert('Erro ao ocultar elemento: Informe se deseja ocultar uma tabela ou um campo!');
+            }
+            sml_ShowTables(ids);
+        }
+            
 
     } else {
-        sml_HideTables(tableId, true);
+        if (tableOrField.toUpperCase() == "TABLE")
+            sml_HideTables(ids, true);
+        else
+            sml_Hide(ids, true);
     }
 
 }
