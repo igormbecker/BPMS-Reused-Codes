@@ -442,47 +442,48 @@ function sml_Closest(obj, el) {
 }
 
 /*
- * Desenvolvedor: Igor Becker
-Esconde ou mostra uma tabela apos selecionar valor no campo
-@PARAM: @obj = Objeto.
-@PARAM: @tableId = identificador da tabela.
-@PARAM: @valToHide = Condicao para esconder tabela.
-@PARAM: @tableOrField = Condicao para esconder tabela ou campo. Valores aceitos table ou field.
-Ex de chamada: onChange="sml_OnChange(this, 'tblExemplo', 'Não', 'table');"
+Faz o append da mensagem no parent do campo (Função geralmente utilizada por funções que validam campos).
+@PARAM: @Obj = OBJ DO CAMPO.
+@PARAM: @message = MENSAGEM.
+@PARAM: @idMessage = ID DA MENSAGEM.
+@PARAM: @isValid = true/false.
+Ex de chamada Cpf inválido: sml_appendMessageField(this, "CPF inválido!", "spanCpfMessage", false);
+Ex de chamada Cpf válido: sml_appendMessageField(this, "", "spanCpfMessage", true);
 */
-function sml_OnChange(obj, ids, valToHide, tableOrField) {
+function sml_appendMessageField(Obj, message, idMessage, isValid) {
+    var objOldMsg = document.getElementById(idMessage);
+    var objNewMsg = document.createElement("span");
+    objNewMsg.setAttribute("id", idMessage);
 
-    if (obj.value != null && obj.value != "" && obj.value != undefined) {
-
-        if (obj.value == valToHide) {
-
-            if (tableOrField) {
-                if (tableOrField.toUpperCase() == "TABLE") 
-                    sml_HideTables(ids, true);
-                else
-                    sml_Hide(ids, true);
-            } else {
-                alert('Erro ao ocultar elemento: Informe se deseja ocultar uma tabela ou um campo!');
-            }
-
-        } else {
-            if (tableOrField) {
-                if (tableOrField.toUpperCase() == "TABLE")
-                    sml_ShowTables(ids);
-                else
-                    sml_Show(ids);
-            } else {
-                alert('Erro ao ocultar elemento: Informe se deseja ocultar uma tabela ou um campo!');
-            }
-            sml_ShowTables(ids);
-        }
-            
-
-    } else {
-        if (tableOrField.toUpperCase() == "TABLE")
-            sml_HideTables(ids, true);
-        else
-            sml_Hide(ids, true);
+    //Verifica se existe mensagem de erro.
+    if (message && idMessage) {
+        objNewMsg.innerText = message;
+        objNewMsg.style.fontWeight = "bold";
+        objNewMsg.style.color = "red";
     }
 
+    if (Obj.value == "") {
+        Obj.style.border = "";
+
+        if (objOldMsg)
+            objOldMsg.remove();
+
+    } else {
+        if (isValid) {
+
+            if (objOldMsg)
+                objOldMsg.remove();
+
+            Obj.style.border = "1px solid green";
+
+        } else {
+
+            if (objOldMsg)
+                objOldMsg.remove();
+
+            Obj.style.border = "1px solid red";
+            Obj.parentElement.appendChild(objNewMsg);
+
+        }
+    }
 }
