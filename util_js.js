@@ -245,7 +245,7 @@ function sml_ShowTables(tableIds) {
             var arrayIds = tableIds.split(',');
 
             Array.from(arrayIds).forEach(id => {
-                showTablesProcess(id.trim(), clean);
+                showTablesProcess(id.trim());
             });
 
         } else {
@@ -307,7 +307,6 @@ function sml_Hide(fieldID) {
                         });
                     }
                         
-
                     if (fieldType == "textarea")
                         field.value = '';
                 }
