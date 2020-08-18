@@ -14,12 +14,17 @@ Ex de chamada: sml_Hide('nome,cpf');
 function sml_Hide(fieldID, clean) {
     if (fieldID !== "" && fieldID !== null && fieldID !== undefined) {
         var field;
+        var xType;
+        var tr;
+        var btnDelFile;
+
         if (fieldID.indexOf(",") >= 0) {
             var Ids = fieldID.replace(' ', '');
             var arrayIds = Ids.split(',');
 
             for (var i = 0; i < arrayIds.length; i++) {
                 field = $('inp:' + $.trim(arrayIds[i]));
+                xType = field.attr("xtype");
 
                 if (field.attr('type') !== 'hidden') {
                     field.closest('tr').hide();
@@ -37,11 +42,22 @@ function sml_Hide(fieldID, clean) {
                 if (clean) {
 
                     if (field.is('input')) {
-                        if (field.attr('type') === 'text') {
+
+                        if (field.attr('type') == 'text')
                             field.val('');
-                        } else if (field.attr('type') === 'radio' || field.attr('type') === 'checkbox') {
+
+                        if (field.attr('type') == 'radio' || field.attr('type') == 'checkbox')
                             field.prop('checked', false);
+
+                        if (xType && xType.toUpperCase() == "FILE") {
+                            tr = field.closest('tr');
+                            btnDelFile = tr.find('.btn-danger');
+
+                            if (btnDelFile[0])
+                                delFileFormField(arrayIds[i], btnDelFile[0]);
+
                         }
+                        
                     } else if (field.is('select') || field.is('textarea')) {
                         field.val('');
                     }
@@ -51,6 +67,8 @@ function sml_Hide(fieldID, clean) {
             }
         } else {
             field = $('inp:' + $.trim(fieldID));
+            xType = field.attr("xtype");
+
             if (field.attr('type') !== 'hidden') {
                 field.closest('tr').hide();
             } else {
@@ -64,11 +82,21 @@ function sml_Hide(fieldID, clean) {
                 field[0].setAttribute('required', 'N');
 
             if (field.is('input')) {
-                if (field.attr('type') === 'text') {
+
+                if (field.attr('type') === 'text')
                     field.val('');
-                } else if (field.attr('type') === 'radio' || field.attr('type') === 'checkbox') {
+
+                if (field.attr('type') === 'radio' || field.attr('type') === 'checkbox')
                     field.prop('checked', false);
+
+                if (xType && xType.toUpperCase() == "FILE") {
+                    tr = field.closest('tr');
+                    btnDelFile = tr.find('.btn-danger');
+
+                    if (btnDelFile[0])
+                        delFileFormField(fieldID, btnDelFile[0]);
                 }
+                
             } else if (field.is('select') || field.is('textarea')) {
                 field.val('');
             }
@@ -156,21 +184,31 @@ function sml_hideTables(ids, clean) {
         }
 
         $tbl.find('input, select, textarea').each(function () {
-            var $this = $(this);
+            var tr = $(this).closest('tr');
+            var id = $(this).attr("xname").replace('inp', '');
             var type = $(this).attr("type");
+            var xtype = $(this).attr("xtype");
 
-            if (type === undefined || type !== "button") {
+            if (type == undefined || type != "button") {
                 var isrequired =
                     (
-                        ($(this).attr("data-isrequired") !== null && $(this).attr("data-isrequired") === "true")
-                        || ($(this)[0].getAttribute("required") !== null && $(this)[0].getAttribute("required") === "S")
+                        ($(this).attr("data-isrequired") != null && $(this).attr("data-isrequired") == "true")
+                        || ($(this)[0].getAttribute("required") != null && $(this)[0].getAttribute("required") == "S")
                     ) ? true : false;
+
                 $(this).attr("data-isrequired", isrequired);
                 $(this)[0].setAttribute("required", "N");
                 $(this).attr("class", "");
 
-                if (clean && $(this).val() !== "0,00")
+                if (clean && $(this).val() != "0,00")
                     $(this).val("");
+
+                if (xtype && xtype.toUpperCase() == "FILE") {
+                    var btnDelFile = tr.find('.btn-danger');
+
+                    if (btnDelFile[0])
+                        delFileFormField(id, btnDelFile[0]);
+                }
             }
         });
     }
