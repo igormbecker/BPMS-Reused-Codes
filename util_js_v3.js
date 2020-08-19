@@ -71,7 +71,7 @@ function sml_HideTables(tableIds, clean) {
                 var textareas = row.querySelectorAll('textarea');
 
                 //Apaga os valores dos inputs
-                if (inputs) {
+                if (inputs.length > 0) {
                     Array.from(inputs).forEach(obj => {
                         var type = obj.getAttribute("type");
                         var xtype = obj.getAttribute("xtype");
@@ -97,14 +97,14 @@ function sml_HideTables(tableIds, clean) {
                     });
                 }
                 //Faz as regras para os selects
-                if (selects) {
+                if (selects.length > 0) {
                     Array.from(selects).forEach(obj => {
                         obj.value = '';
                     });
                 }
                 //Faz as regras para os textareas
-                if (textareas) {
-                    Array.from(selects).forEach(obj => {
+                if (textareas.length > 0) {
+                    Array.from(textareas).forEach(obj => {
                         obj.value = '';
                     });
                 }
@@ -119,7 +119,7 @@ function sml_HideTables(tableIds, clean) {
             var isrequired = '';
 
             //Faz as regras para os inputs
-            if (inputs) {
+            if (inputs.length > 0) {
                 Array.from(inputs).forEach(obj => {
                     var type = obj.getAttribute("type");
                     isrequired =
@@ -137,7 +137,7 @@ function sml_HideTables(tableIds, clean) {
                 });
             }
             //Faz as regras para os selects
-            if (selects) {
+            if (selects.length > 0) {
                 Array.from(selects).forEach(obj => {
                     isrequired =
                         (
@@ -150,7 +150,7 @@ function sml_HideTables(tableIds, clean) {
                 });
             }
             //Faz as regras para os textareas
-            if (textareas) {
+            if (textareas.length > 0) {
                 Array.from(textareas).forEach(obj => {
                     isrequired =
                         (
@@ -210,7 +210,7 @@ function sml_ShowTables(tableIds) {
             var wasrequired = '';
 
             //Faz as regras para os inputs
-            if (inputs) {
+            if (inputs.length > 0) {
                 Array.from(inputs).forEach(obj => {
                     var type = obj.getAttribute("type");
                     wasrequired = obj.getAttribute("data-isrequired");
@@ -224,7 +224,7 @@ function sml_ShowTables(tableIds) {
                 });
             }
             //Faz as regras para os selects
-            if (selects) {
+            if (selects.length > 0) {
                 Array.from(selects).forEach(obj => {
                     wasrequired = obj.getAttribute("data-isrequired");
 
@@ -233,7 +233,7 @@ function sml_ShowTables(tableIds) {
                 });
             }
             //Faz as regras para os selects
-            if (textareas) {
+            if (textareas.length > 0) {
                 Array.from(textareas).forEach(obj => {
                     wasrequired = obj.getAttribute("data-isrequired");
 
