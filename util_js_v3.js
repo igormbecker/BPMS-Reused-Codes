@@ -51,47 +51,89 @@ function sml_HideTables(tableIds, clean) {
         var i = 0;
         var tbl = document.getElementById(id);
 
-        tbl.style.display = "none";
+        if (tbl) {
 
-        if (clean) {
-            if (tbl.getAttribute("mult") == "S") {
-                //Apaga as linhas da tabela exceto a primeira.
+            tbl.style.display = "none";
+
+            if (clean) {
+                if (tbl.getAttribute("mult") == "S") {
+                    //Apaga as linhas da tabela exceto a primeira.
+                    Array.from(tbl.tBodies[0].rows).forEach(row => {
+                        if (i > 1)
+                            DeleteRow(row.querySelector('button'));
+
+                        i++;
+                    });
+
+                }
+                //Apaga os valores dos campos dentro da tabela.
                 Array.from(tbl.tBodies[0].rows).forEach(row => {
-                    if (i > 1)
-                        DeleteRow(row.querySelector('button'));
+                    var inputs = row.querySelectorAll('input');
+                    var selects = row.querySelectorAll('select');
+                    var textareas = row.querySelectorAll('textarea');
 
-                    i++;
+                    //Apaga os valores dos inputs
+                    if (inputs.length > 0) {
+                        Array.from(inputs).forEach(obj => {
+                            var type = obj.getAttribute("type");
+                            var xtype = obj.getAttribute("xtype");
+
+                            //Se o elemento for diferente de botão ou hidden
+                            if (type && type.toUpperCase() != "BUTTON" && type.toUpperCase() != "HIDDEN") {
+
+                                if (type.toUpperCase() == "TEXT")
+                                    obj.value = '';
+
+                                if (type.toUpperCase() == "RADIO" || type.toUpperCase() == "CHECKBOX")
+                                    obj.checked = false;
+
+                                if (xtype && xtype.toUpperCase() == "FILE") {
+                                    var btnDelFile = row.querySelector(".btn-danger");
+                                    var id = obj.getAttribute("xname").replace('inp', '');
+
+                                    if (btnDelFile)
+                                        delFileFormField(id, btnDelFile);
+                                }
+                            }
+
+                        });
+                    }
+                    //Faz as regras para os selects
+                    if (selects.length > 0) {
+                        Array.from(selects).forEach(obj => {
+                            obj.value = '';
+                        });
+                    }
+                    //Faz as regras para os textareas
+                    if (textareas.length > 0) {
+                        Array.from(textareas).forEach(obj => {
+                            obj.value = '';
+                        });
+                    }
                 });
-
             }
-            //Apaga os valores dos campos dentro da tabela.
+
+            //Remove obrigatoriedade dos campos
             Array.from(tbl.tBodies[0].rows).forEach(row => {
                 var inputs = row.querySelectorAll('input');
                 var selects = row.querySelectorAll('select');
                 var textareas = row.querySelectorAll('textarea');
+                var isrequired = '';
 
-                //Apaga os valores dos inputs
+                //Faz as regras para os inputs
                 if (inputs.length > 0) {
                     Array.from(inputs).forEach(obj => {
                         var type = obj.getAttribute("type");
-                        var xtype = obj.getAttribute("xtype");
+                        isrequired =
+                            (
+                                (obj.getAttribute("data-isrequired") != null && obj.getAttribute("data-isrequired") == "true") ||
+                                (obj.getAttribute("required") != null && obj.getAttribute("required") == "S")
+                            ) ? true : false;
 
                         //Se o elemento for diferente de botão ou hidden
                         if (type && type.toUpperCase() != "BUTTON" && type.toUpperCase() != "HIDDEN") {
-
-                            if (type.toUpperCase() == "TEXT")
-                                obj.value = '';
-
-                            if (type.toUpperCase() == "RADIO" || type.toUpperCase() == "CHECKBOX")
-                                obj.checked = false;
-
-                            if (xtype && xtype.toUpperCase() == "FILE") {
-                                var btnDelFile = row.querySelector(".btn-danger");
-                                var id = obj.getAttribute("xname").replace('inp', '');
-
-                                if (btnDelFile)
-                                    delFileFormField(id, btnDelFile);
-                            }
+                            obj.setAttribute("data-isrequired", isrequired);
+                            obj.setAttribute("required", "N");
                         }
 
                     });
@@ -99,77 +141,39 @@ function sml_HideTables(tableIds, clean) {
                 //Faz as regras para os selects
                 if (selects.length > 0) {
                     Array.from(selects).forEach(obj => {
-                        obj.value = '';
+                        isrequired =
+                            (
+                                (obj.getAttribute("data-isrequired") != null && obj.getAttribute("data-isrequired") == "true") ||
+                                (obj.getAttribute("required") != null && obj.getAttribute("required") == "S")
+                            ) ? true : false;
+
+                        obj.setAttribute("data-isrequired", isrequired);
+                        obj.setAttribute("required", "N");
                     });
                 }
                 //Faz as regras para os textareas
                 if (textareas.length > 0) {
                     Array.from(textareas).forEach(obj => {
-                        obj.value = '';
-                    });
-                }
-            });
-        }
+                        isrequired =
+                            (
+                                (obj.getAttribute("data-isrequired") != null && obj.getAttribute("data-isrequired") == "true") ||
+                                (obj.getAttribute("required") != null && obj.getAttribute("required") == "S")
+                            ) ? true : false;
 
-        //Remove obrigatoriedade dos campos
-        Array.from(tbl.tBodies[0].rows).forEach(row => {
-            var inputs = row.querySelectorAll('input');
-            var selects = row.querySelectorAll('select');
-            var textareas = row.querySelectorAll('textarea');
-            var isrequired = '';
-
-            //Faz as regras para os inputs
-            if (inputs.length > 0) {
-                Array.from(inputs).forEach(obj => {
-                    var type = obj.getAttribute("type");
-                    isrequired =
-                        (
-                            (obj.getAttribute("data-isrequired") != null && obj.getAttribute("data-isrequired") == "true") ||
-                            (obj.getAttribute("required") != null && obj.getAttribute("required") == "S")
-                        ) ? true : false;
-
-                    //Se o elemento for diferente de botão ou hidden
-                    if (type && type.toUpperCase() != "BUTTON" && type.toUpperCase() != "HIDDEN") {
                         obj.setAttribute("data-isrequired", isrequired);
                         obj.setAttribute("required", "N");
-                    }
+                    });
+                }
+                //Faz as regras para as linhas
+                if (row.getAttribute("class") != "group" && tbl.getAttribute("mult") != "S")
+                    row.setAttribute("class", "nObrigatorio");
 
-                });
-            }
-            //Faz as regras para os selects
-            if (selects.length > 0) {
-                Array.from(selects).forEach(obj => {
-                    isrequired =
-                        (
-                            (obj.getAttribute("data-isrequired") != null && obj.getAttribute("data-isrequired") == "true") ||
-                            (obj.getAttribute("required") != null && obj.getAttribute("required") == "S")
-                        ) ? true : false;
+            });
 
-                    obj.setAttribute("data-isrequired", isrequired);
-                    obj.setAttribute("required", "N");
-                });
-            }
-            //Faz as regras para os textareas
-            if (textareas.length > 0) {
-                Array.from(textareas).forEach(obj => {
-                    isrequired =
-                        (
-                            (obj.getAttribute("data-isrequired") != null && obj.getAttribute("data-isrequired") == "true") ||
-                            (obj.getAttribute("required") != null && obj.getAttribute("required") == "S")
-                        ) ? true : false;
-
-                    obj.setAttribute("data-isrequired", isrequired);
-                    obj.setAttribute("required", "N");
-                });
-            }
-            //Faz as regras para as linhas
-            if (row.getAttribute("class") != "group" && tbl.getAttribute("mult") != "S")
-                row.setAttribute("class", "nObrigatorio");
-
-        });
+        }
 
     }
-    
+
     if (tableIds != "") {
         if (tableIds.indexOf(',') >= 0) {
             var arrayIds = tableIds.split(',');
@@ -200,52 +204,56 @@ function sml_ShowTables(tableIds) {
         var i = 0;
         var tbl = document.getElementById(id);
 
-        tbl.style.display = "";
+        if (tbl) {
 
-        //Faz as regras de obrigatoriedade para cada campo da tabela
-        Array.from(tbl.tBodies[0].rows).forEach(row => {
-            var inputs = row.querySelectorAll('input');
-            var selects = row.querySelectorAll('select');
-            var textareas = row.querySelectorAll('textarea');
-            var wasrequired = '';
+            tbl.style.display = "";
 
-            //Faz as regras para os inputs
-            if (inputs.length > 0) {
-                Array.from(inputs).forEach(obj => {
-                    var type = obj.getAttribute("type");
-                    wasrequired = obj.getAttribute("data-isrequired");
+            //Faz as regras de obrigatoriedade para cada campo da tabela
+            Array.from(tbl.tBodies[0].rows).forEach(row => {
+                var inputs = row.querySelectorAll('input');
+                var selects = row.querySelectorAll('select');
+                var textareas = row.querySelectorAll('textarea');
+                var wasrequired = '';
 
-                    //Se o elemento for diferente de botão ou hidden
-                    if (type && type.toUpperCase() != "BUTTON" && type.toUpperCase() != "HIDDEN") {
+                //Faz as regras para os inputs
+                if (inputs.length > 0) {
+                    Array.from(inputs).forEach(obj => {
+                        var type = obj.getAttribute("type");
+                        wasrequired = obj.getAttribute("data-isrequired");
+
+                        //Se o elemento for diferente de botão ou hidden
+                        if (type && type.toUpperCase() != "BUTTON" && type.toUpperCase() != "HIDDEN") {
+                            if (wasrequired != null && wasrequired == "true")
+                                obj.setAttribute("required", "S");
+                        }
+
+                    });
+                }
+                //Faz as regras para os selects
+                if (selects.length > 0) {
+                    Array.from(selects).forEach(obj => {
+                        wasrequired = obj.getAttribute("data-isrequired");
+
                         if (wasrequired != null && wasrequired == "true")
                             obj.setAttribute("required", "S");
-                    }
+                    });
+                }
+                //Faz as regras para os selects
+                if (textareas.length > 0) {
+                    Array.from(textareas).forEach(obj => {
+                        wasrequired = obj.getAttribute("data-isrequired");
 
-                });
-            }
-            //Faz as regras para os selects
-            if (selects.length > 0) {
-                Array.from(selects).forEach(obj => {
-                    wasrequired = obj.getAttribute("data-isrequired");
+                        if (wasrequired != null && wasrequired == "true")
+                            obj.setAttribute("required", "S");
+                    });
+                }
+                //Adiciona a classe obrigatorio na linha caso necessario
+                if (row.getAttribute("class") != "group" && tbl.getAttribute("mult") != "S" && wasrequired == "true")
+                    row.setAttribute("class", "Obrigatorio");
 
-                    if (wasrequired != null && wasrequired == "true")
-                        obj.setAttribute("required", "S");
-                });
-            }
-            //Faz as regras para os selects
-            if (textareas.length > 0) {
-                Array.from(textareas).forEach(obj => {
-                    wasrequired = obj.getAttribute("data-isrequired");
+            });
 
-                    if (wasrequired != null && wasrequired == "true")
-                        obj.setAttribute("required", "S");
-                });
-            }
-            //Adiciona a classe obrigatorio na linha caso necessario
-            if (row.getAttribute("class") != "group" && tbl.getAttribute("mult") != "S" && wasrequired == "true")
-                row.setAttribute("class", "Obrigatorio");
-
-        });
+        }
 
     }
 
@@ -318,7 +326,7 @@ function sml_Hide(fieldID) {
                             f.checked = false;
                         });
                     }
-                        
+
                     if (fieldType.toUpperCase() == "TEXTAREA")
                         field.value = '';
 
@@ -330,7 +338,11 @@ function sml_Hide(fieldID) {
                     }
                 }
 
-                tr.style.display = "none";
+                if (tr && fieldType != "hidden")
+                    tr.style.display = "none";
+
+                if (tr && tr.getAttribute('class') != "group" && fieldType != "hidden")
+                    tr.setAttribute('class', 'NObrigatorio');
 
             });
 
@@ -383,9 +395,10 @@ function sml_Hide(fieldID) {
                 }
             }
 
-            tr.style.display = "none";
+            if (tr && fieldType != "hidden")
+                tr.style.display = "none";
 
-            if (tr.getAttribute('class') != "group")
+            if (tr && tr.getAttribute('class') != "group" && fieldType != "hidden")
                 tr.setAttribute('class', 'NObrigatorio');
         }
     }
@@ -419,10 +432,14 @@ function sml_Show(fieldID) {
                 if (isrequired == "true" && fieldType.toUpperCase() != "HIDDEN")
                     field.setAttribute('required', 'S');
 
-                tr.style.display = "";
+                if (tr)
+                    tr.style.display = "";
 
-                if (isrequired == "true" && tr.getAttribute('class') != "group")
-                    tr.setAttribute('class', 'Obrigatorio');
+                if (tr) {
+                    if (isrequired == "true" && tr.getAttribute('class') != "group")
+                        tr.setAttribute('class', 'Obrigatorio');
+                }
+
 
             });
 
@@ -438,10 +455,13 @@ function sml_Show(fieldID) {
             if (isrequired == "true" && fieldType.toUpperCase() != "HIDDEN")
                 field.setAttribute('required', 'S');
 
-            tr.style.display = "";
+            if (tr)
+                tr.style.display = "";
 
-            if (isrequired == "true" && tr.getAttribute('class') != "group")
-                tr.setAttribute('class', 'Obrigatorio');
+            if (tr) {
+                if (isrequired == "true" && tr.getAttribute('class') != "group")
+                    tr.setAttribute('class', 'Obrigatorio');
+            }
         }
     }
 }
@@ -460,7 +480,7 @@ function sml_Closest(obj, el) {
         if (obj.nodeName == el.toUpperCase())
             return obj;
         else
-            return sml_Closest(obj.parentElement, "tr");
+            return sml_Closest(obj.parentElement, el);
 
     } else {
         return null;
@@ -678,4 +698,221 @@ function sml_IsRequired(fieldId, isRequired) {
         obj.setAttribute('required', 'N');
         tr.setAttribute("class", "nObrigatorio");
     }
+}
+
+/*
+Função responsável por esconder/mostrar opções de uma caixa de seleção localizado ou não em uma tabela multi-valorada.
+@PARAM: @selectId = Identificador da Caixa de seleção.
+@PARAM: @selectValues = Opções da caixa de seleção.
+@PARAM: @op = operação. Valores: SHOW ou HIDE.
+@PARAM: @hasMultiple = Se a caixa de seleção estiver dentro de uma tabela multi-valorada. Valores do parâmetro: true ou false.
+@PARAM: @tableId = identificador da tabela multi-valorada.
+Ex de chamada com tabela multi-valorada: sml_ShowOrHideSelectOptions("identificador", "Opção 1, Opção 2, Opção 5", "HIDE", true, "tblAlteracoesNoDocumento");
+Ex de chamada com tabela multi-valorada: sml_ShowOrHideSelectOptions("identificador", "Opção 1, Opção 2, Opção 5", "SHOW", true, "tblAlteracoesNoDocumento");
+Ex de chamada sem tabela multi-valorada: sml_ShowOrHideSelectOptions("identificador", "Opção 1, Opção 2, Opção 5", "HIDE", false, "");
+Ex de chamada sem tabela multi-valorada: sml_ShowOrHideSelectOptions("identificador", "Opção 1, Opção 2, Opção 5", "SHOW", false, "");
+ */
+function sml_ShowOrHideSelectOptions(selectId, selectValues, op, hasMultiple, tableId) {
+    var tbl;
+    var select;
+    var arrayOptValues;
+
+    if (hasMultiple) {
+        tbl = document.getElementById(tableId);
+
+        Array.from(tbl.tBodies[0].rows).forEach(row => {
+            select = row.querySelector('[xname="inp' + selectId + '"]');
+
+            if (select && select.length > 0) {
+                //Loop para cada opção do meu select.
+                Array.from(select).forEach(option => {
+                    //Verifica se existe mais de uma opção para ocultar ou mostrar.
+                    if (selectValues.indexOf(",") >= 0) {
+
+                        arrayOptValues = selectValues.split(",");
+                        //Loop para cada opção que desejo esconder.
+                        Array.from(arrayOptValues).forEach(arrayOpt => {
+                            if (arrayOpt.toUpperCase() == option.text.toUpperCase()) {
+                                if (op.toUpperCase() == "HIDE") {
+                                    option.disabled = true;
+                                    option.style.display = 'none';
+                                } else {
+                                    option.disabled = false;
+                                    option.style.display = 'block';
+                                }
+                            }
+                        });
+
+                    } else {
+
+                        if (option.text.toUpperCase() == selectValues.toUpperCase()) {
+                            if (op.toUpperCase() == "HIDE") {
+                                option.disabled = true;
+                                option.style.display = 'none';
+                            } else {
+                                option.disabled = false;
+                                option.style.display = 'block';
+                            }
+                        }
+
+                    }
+
+                });
+            }
+        });
+
+    } else {
+
+        select = document.querySelector('[xname="inp' + selectId + '"]');
+
+        if (select.length > 0) {
+            //Loop para cada opção do meu select.
+            Array.from(select).forEach(option => {
+                //Verifica se existe mais de uma opção para ocultar ou mostrar.
+                if (selectValues.indexOf(",") >= 0) {
+
+                    arrayOptValues = selectValues.split(",");
+                    //Loop para cada opção que desejo esconder.
+                    Array.from(arrayOptValues).forEach(arrayOpt => {
+                        if (arrayOpt.toUpperCase() == option.text.toUpperCase()) {
+                            if (op.toUpperCase() == "HIDE") {
+                                option.disabled = true;
+                                option.style.display = 'none';
+                            } else {
+                                option.disabled = false;
+                                option.style.display = 'block';
+                            }
+                        }
+                    });
+
+                } else {
+
+                    if (option.text.toUpperCase() == selectValues.toUpperCase()) {
+                        if (op.toUpperCase() == "HIDE") {
+                            option.disabled = true;
+                            option.style.display = 'none';
+                        } else {
+                            option.disabled = false;
+                            option.style.display = 'block';
+                        }
+                    }
+
+                }
+
+            });
+        }
+
+    }
+
+}
+
+/*
+ Função responsável por formatar o campo em telefone.
+ @PARAM: @obj = objeto.
+ Ex de chamada: onkeyup="sml_PhoneMask(this);"
+ Ex de chamada: onblur="sml_PhoneMask(this);"
+ Ex de chamada: onchange="sml_PhoneMask(this);"
+*/
+function sml_PhoneMask(obj) {
+
+    var phoneNumber = obj.value.replace(/[^\d]+/g, '');    //Somente Numeros.
+    var ddd;
+    var firstPhoneDigits;
+    var lastPhoneDigits;
+
+    if (phoneNumber != "" && phoneNumber != null && phoneNumber != undefined) {
+        //Celular
+        if (phoneNumber.length > 10) {
+
+            ddd = phoneNumber.substr(0, 2);                 //Pega os 2 primeiros dígitos
+            firstPhoneDigits = phoneNumber.substr(2, 5);    //Pega os 5 primeiros dígitos após o ddd
+            lastPhoneDigits = phoneNumber.substr(-4);       //Pega os 4 últimos dígitos
+            phoneNumber = `(${ddd}) ${firstPhoneDigits}-${lastPhoneDigits}`;
+            //Fixo
+        } else if (phoneNumber.length === 10) {
+
+            ddd = phoneNumber.substr(0, 2);                 //Pega os 2 primeiros dígitos
+            firstPhoneDigits = phoneNumber.substr(2, 4);    //Pega os 4 primeiros dígitos após o ddd
+            lastPhoneDigits = phoneNumber.substr(-4);       //Pega os 4 últimos dígitos
+            phoneNumber = `(${ddd}) ${firstPhoneDigits}-${lastPhoneDigits}`;
+
+        }
+        obj.value = phoneNumber;
+    }
+
+}
+
+/*
+EXEMPLO DE FUNÇÃO PARA CONTROLAR TABELA MULTI-VALORADA AO INSERIR OU REMOVER LINHAS
+Ao adicionar/remover uma linha na tabela multi-valorada, adiciona função de controle nos botões.
+@PARAM: @tblId = Id tabela.
+Ex de chamada: sml_addFunctionOnInsertAndDeleteTableValue($("table[id='tblRepresentantesLegais']"));
+*/
+function sml_addFunctionOnInsertAndDeleteTableValue(tblId) {
+    //número de linhas permitidas
+    //EX: numberLinesAllowed = 0; = 1 linha permitida.
+    //EX: numberLinesAllowed = 1; = 2 linhas permitidas.
+    //EX: numberLinesAllowed = 2; = 3 linhas permitidas.
+    //EX: numberLinesAllowed = 3; = 4 linhas permitidas.
+    var numberLinesAllowed = 3;
+    var tbl = document.getElementById(tblId);
+
+    if (tbl && tbl.rows.length > 0) {
+        var btnInsertRow = tbl.querySelector('[id="BtnInsertNewRow"]');
+        btnInsertRow.addEventListener("click", function () {
+            sml_CheckTableLines(tbl);
+            sml_DeleteTableLine(tbl);
+        });
+    }
+
+    /*
+     Após inserir a linha da tabela multi-valorada verifica a quantidade de linhas adicionadas e faz as regras.
+     @PARAM: @tbl = Objeto tabela.
+    */
+    function sml_CheckTableLines(tbl) {
+        var btnInsertRow;
+        if (tbl && tbl.rows.length > 0) {
+            var tableLines = tbl.rows.length - 1;
+            btnInsertRow = tbl.querySelector('[id="BtnInsertNewRow"]');
+
+            if (tableLines > numberLinesAllowed)
+                btnInsertRow.style.display = "none";
+            else
+                btnInsertRow.style.display = "";
+        }
+    }
+    /*
+    Para cada botão de Excluir linha da tabela, adiciona a função de verificar a quantidade de linhas para mostrar o botão de inserir linhas.
+    @PARAM: @tbl = Objeto tabela.
+    */
+    function sml_DeleteTableLine(tbl) {
+        var btnDelete;
+        btnDelete = tbl.querySelectorAll('[id="btnDeletewRow"]');
+
+        if (btnDelete && btnDelete.length > 0) {
+            Array.from(btnDelete).forEach(button => {
+                button.addEventListener("click", function () {
+                    sml_CheckTableLines(tbl);
+                });
+            });
+        }
+    }
+
+}
+
+
+/*
+ * Desenvolvedor: Igor Becker
+Função para realizar a criação de uma senha aleatória.
+@PARAM: @obj = objeto que ficará salvo o resultado.
+Ex de chamada: sml_GeneratePassword(this);
+*/
+function sml_GeneratePassword(obj) {
+    var length = 12,
+        charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+        retVal = "";
+    for (var i = 0, n = charset.length; i < length; ++i) {
+        retVal += charset.charAt(Math.floor(Math.random() * n));
+    }
+    obj.value = retVal;
 }
