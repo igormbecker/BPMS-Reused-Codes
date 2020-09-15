@@ -57,7 +57,7 @@ function sml_Hide(fieldID, clean) {
                                 delFileFormField(arrayIds[i], btnDelFile[0]);
 
                         }
-                        
+
                     } else if (field.is('select') || field.is('textarea')) {
                         field.val('');
                     }
@@ -96,7 +96,7 @@ function sml_Hide(fieldID, clean) {
                     if (btnDelFile[0])
                         delFileFormField(fieldID, btnDelFile[0]);
                 }
-                
+
             } else if (field.is('select') || field.is('textarea')) {
                 field.val('');
             }
@@ -556,7 +556,7 @@ function sml_PhoneMask($obj) {
             firstPhoneDigits = phoneNumber.substr(2, 5);    //Pega os 5 primeiros dígitos após o ddd
             lastPhoneDigits = phoneNumber.substr(-4);       //Pega os 4 últimos dígitos
             phoneNumber = "(" + ddd + ") " + firstPhoneDigits + "-" + lastPhoneDigits;
-        //Fixo
+            //Fixo
         } else if (phoneNumber.length === 10) {
 
             ddd = phoneNumber.substr(0, 2);                 //Pega os 2 primeiros dígitos

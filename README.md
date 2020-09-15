@@ -1,19 +1,10 @@
-# Codigos Reaproveitaveis SQL, jQuery e Javascript #
+# Codigos Reaproveitaveis jQuery e Javascript #
 
 ### util_jquery.js ###
-* ARQUIVO CONTENDO DIVERSAS FUNÇÕES EM JQUERY, GENÉRICAS E REAPROVEITÁVEIS PARA DESENVOLVIMENTO DE NOVOS PROJETOS NO ORQUESTRA BPM V3.
+* Arquivo contendo diversas funções em jquery, genéricas e reaproveitáveis para desenvolvimento de novos projetos no Orquestra BPM V3.
 
 ### util_js_v3.js ###
-* ARQUIVO CONTENDO DIVERSAS FUNÇÕES EM JAVASCRIPT, GENÉRICAS E REAPROVEITÁVEIS PARA DESENVOLVIMENTO DE NOVOS PROJETOS NO ORQUESTRA BPM V3 SEM DEPENDER DE JQUERY.
+* Arquivo contendo diversas funções em javascript, genéricas e reaproveitáveis para desenvolvimento de novos projetos no Orquestra BPM V3 sem depender de jquery.
 
 ### util_js_v4.js ###
-* ARQUIVO CONTENDO DIVERSAS FUNÇÕES EM JAVASCRIPT, GENÉRICAS E REAPROVEITÁVEIS PARA DESENVOLVIMENTO DE NOVOS PROJETOS NO ORQUESTRA BPM V4 CONTEMPLANDO O NOVO MODO DE EXECUÇÃO 2.0.
-
-### util_Oracle.sql ###
-* SCRIPT PARA DELETAR TAREFAS FANTASMAS DO PROCESSO (ORACLE)
-* ATUALIZA A URL DAS FONTES DE DADOS IMPORTADAS PARA A URL DO AMBIENTE ATUAL (ORACLE).
-
-### util_SqlServer.sql ###
-* SCRIPT PARA DELETAR TAREFAS FANTASMAS DO PROCESSO.
-* ATUALIZA A URL DAS FONTES DE DADOS IMPORTADAS PARA A URL DO AMBIENTE ATUAL.
-
+* Arquivo contendo diversas funções em javascript, genéricas e reaproveitáveis para desenvolvimento de novos projetos no Orquestra BPM V4 contemplando o novo modo de execução 2.0.
