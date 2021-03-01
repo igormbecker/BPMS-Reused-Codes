@@ -319,7 +319,7 @@ function sml_Hide(fieldID) {
                     if (fieldType.toUpperCase() == "TEXT")
                         field.value = '';
 
-                    if (fieldType.toUpperCase() == "SELECT")
+                    if (fieldType.toUpperCase() == "SELECT" || fieldType.toUpperCase() == "SELECT-ONE")
                         field.value = '';
 
                     if (fieldType.toUpperCase() == "RADIO" || fieldType.toUpperCase() == "CHECKBOX") {
@@ -725,17 +725,39 @@ Ex de chamada para obrigar: sml_IsRequired('identificadorDoCampo', true);
 Ex de chamada para desobrigar: sml_IsRequired('identificadorDoCampo', false);
 */
 function sml_IsRequired(fieldId, isRequired) {
-    var obj = document.querySelector("[xname='inp" + fieldId + "']");
-    var tr = sml_Closest(obj, "tr");
+    var tr;
+    var obj;
 
-    if (isRequired) {
-        obj.setAttribute('required', 'S');
-        tr.setAttribute('class', 'execute-required');
+    if(fieldId.indexOf(",") >= 0) {
+        var Ids = fieldId.split(',');
+
+        Array.from(Ids).forEach(id => {
+            obj = document.querySelector("[xname='inp" + id + "']");
+            tr = sml_Closest(obj, "tr");
+
+            if (isRequired) {
+                obj.setAttribute('required', 'S');
+                tr.setAttribute('class', 'execute-required');
+            } else {
+                obj.setAttribute('required', 'N');
+                tr.setAttribute("class", "");
+            }
+
+        });
     } else {
-        obj.setAttribute('required', 'N');
-        tr.setAttribute("class", "");
 
+        obj = document.querySelector("[xname='inp" + fieldId + "']");
+        tr = sml_Closest(obj, "tr");
+        
+        if (isRequired) {
+            obj.setAttribute('required', 'S');
+            tr.setAttribute('class', 'execute-required');
+        } else {
+            obj.setAttribute('required', 'N');
+            tr.setAttribute("class", "");
+        }
     }
+
 }
 
 /*
@@ -792,9 +814,9 @@ function sml_ShowOrHideSelectOptions(selectId, selectValues, op, hasMultiple, ta
                                 option.style.display = 'block';
                             }
                         }
-
+                            
                     }
-
+                    
                 });
             }
         });
@@ -989,7 +1011,7 @@ function sml_XhttpMainSearch(url) {
                 const result = JSON.parse(this.responseText);
                 var i = 0;
                 var btnInsertNewLine = document.getElementById("btnInsertNewRow");
-
+                
                 if (result.success.length > 0) {
                     Array.from(result.success).forEach(res => {
                         var fields;
@@ -1036,3 +1058,100 @@ function sml_GeneratePassword(obj) {
     }
     obj.value = retVal;
 }
+
+var p001Form = {
+    Settings: {
+        TimeOut: 200,
+        DataSources: {
+            GetBusinessRules: {
+                name: 'P001 - Regras de Documentos Obrigat?rios', value: '../api/internal/legacy/1.0/datasource/get/1.0/qw0Xk6xWKL563BI8VvBqJuml4PBGOiTftoq5BoAFLR7bx1hPsrcNi7PonxD9rFVEaHOO@k6BIQXRppW7ySlvnw__'
+            }
+        }
+
+    },
+
+    Functions: {
+        buildParamsToGetDataSource: ((params) => {
+            var resultParams = '?';
+            Object.entries(params).forEach((field, index) => {
+                resultParams += index > 0 ? '&' : '';
+                resultParams += field[0] + "=" + field[1];
+            });
+            return resultParams;
+        }),
+    
+        GetFromOrquestraDataSource: (async (dataSource, params) => {
+            var result = '';
+            let strParams = '';
+        
+            var myHeaders = new Headers();
+            var requestOptions = {
+                method: 'GET',
+                headers: myHeaders,
+                redirect: 'follow'
+            };
+        
+            if (params)
+                strParams = p001Form.Functions.buildParamsToGetDataSource(params);
+        
+            var url = dataSource.value + (strParams == '?' ? '' : strParams);
+            await fetch(url, requestOptions)
+                .then(response => response.json())
+                .then(rst => { result = rst.success.length > 1 ? rst.success : rst.success[0] })
+                .catch(error => {
+                    cryo_alert('Erro na consulta da Fonde de dados <b>' + dataSource.name + '</b>', error);
+                    return false
+                })
+        
+            return result;
+        
+        }),
+        
+        searchBusinessRules: (async () => {
+            var inputparams = {
+                inptipoEmpresa: document.getElementById("inptipoEmpresa").value,
+                inptipoCliente: document.getElementById("inptipoCliente").value,
+                inppossuiProcurador: document.getElementById("inppossuiProcurador").value,
+                inpcapitalSocialMaior: document.getElementById("inpcapitalSocialMaior").value,
+                inpexisteBeneficiarioFinal: document.getElementById("inpexisteBeneficiarioFinal").value
+            }
+        
+            await p001Form.Functions.GetFromOrquestraDataSource(p001Form.Settings.DataSources.GetBusinessRules, inputparams)
+                .then(result => {
+                    let allResults = '';
+                    let allResultsJson = [];
+                    let xresult = [];
+        
+                    if (result.constructor == Array) {
+                        xresult = result;
+                    } else {
+                        xresult.push(result);
+                    }
+        
+                    console.log(xresult);
+                    Array.from(xresult).forEach(res => {
+                        if (res.fields.documentosObrigatorios != "") {
+                            Array.from(JSON.parse(res.fields.documentosObrigatorios)).forEach((doc) => {
+                                allResults += `<br>${doc.Document}`;
+                                allResultsJson.push(doc);
+                            });
+                        }
+                    });
+        
+                    if (allResults.length > 0) {
+                        document.getElementById('inpdocumentosObrigatorios').value = allResults.substring(4, allResults.length);
+                        document.querySelector('[xid="divdocumentosObrigatorios"]').innerHTML = allResults.substring(4, allResults.length);
+                        document.getElementById('inpdocumentosObrigatoriosJson').value = JSON.stringify(allResultsJson);
+                    } else {
+                        document.getElementById('inpdocumentosObrigatorios').value = "";
+                        document.querySelector('[xid="divdocumentosObrigatorios"]').innerHTML = "";
+                        document.getElementById('inpdocumentosObrigatoriosJson').value = "";
+                    }
+                });
+                
+        }),
+
+    }
+}
+
+

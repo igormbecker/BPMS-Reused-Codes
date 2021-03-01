@@ -173,7 +173,7 @@ function sml_HideTables(tableIds, clean) {
         }
 
     }
-
+    
     if (tableIds != "") {
         if (tableIds.indexOf(',') >= 0) {
             var arrayIds = tableIds.split(',');
@@ -326,7 +326,7 @@ function sml_Hide(fieldID) {
                             f.checked = false;
                         });
                     }
-
+                        
                     if (fieldType.toUpperCase() == "TEXTAREA")
                         field.value = '';
 
@@ -432,7 +432,7 @@ function sml_Show(fieldID) {
                 if (isrequired == "true" && fieldType.toUpperCase() != "HIDDEN")
                     field.setAttribute('required', 'S');
 
-                if (tr)
+                if(tr)
                     tr.style.display = "";
 
                 if (tr) {
