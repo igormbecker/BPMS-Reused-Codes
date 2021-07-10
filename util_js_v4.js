@@ -26,8 +26,8 @@ function sml_RulesOfPageLoadByTask(task) {
 
             sml_HideTables(tablesToHide);
             sml_Hide(fieldsToHide);
-            sml_ShowOrHideSelectOptions("opcoes", "Opção 1,Opção 2", "HIDE", false, "");
-            sml_ShowOrHideSelectOptions("maiorDe18", "Não", "HIDE", true, "tblColaboradores");
+            sml_ShowOrHideSelectOptions("opcoes", "opcao 1,opcao 2", "HIDE", false, "");
+            sml_ShowOrHideSelectOptions("maiorDe18", "nao", "HIDE", true, "tblColaboradores");
             sml_addFunctionOnInsertAndDeleteTableValue('tblColaboradores');
             break;
 
@@ -267,7 +267,7 @@ function sml_ShowTables(tableIds) {
 
 /*
  * Desenvolvedor: Igor Becker
-Função responsável por esconder e desobrigar um campo.
+Funcao responsavel por esconder e desobrigar um campo.
 Guarda se o campo é obrigatório em um atributo novo "xrequired".
 @PARAM: @fieldID = identificador do campo/campos.
 Ex de chamada: sml_Hide('nome,cpf');
@@ -397,7 +397,7 @@ function sml_Hide(fieldID) {
 
 /*
  * Desenvolvedor: Igor Becker
-Função responsável por mostrar e obrigar o campo se ele for obrigatório.
+Funcao responsavel por mostrar e obrigar o campo se ele for obrigatório.
 Resgata se o campo é obrigatório atraves do atributo novo "xrequired".
 @PARAM: @fieldID = identificador do campo/campos.
 Ex de chamada: sml_Show('nome,cpf');
@@ -452,7 +452,7 @@ function sml_Show(fieldID) {
 
 /*
  * Desenvolvedor: Igor Becker
-Função para retornar o elemento mais proximo de um objeto.
+Funcao para retornar o elemento mais proximo de um objeto.
 @PARAM: @obj = objeto.
 @PARAM: @el = elemento a retornar.
 Ex de chamada: sml_Closest(this, "tr");
@@ -473,12 +473,12 @@ function sml_Closest(obj, el) {
 }
 
 /*
-Faz o append da mensagem no parent do campo (Função geralmente utilizada por funções que validam campos).
+Faz o append da mensagem no parent do campo (Funcao geralmente utilizada por funções que validam campos).
 @PARAM: @Obj = OBJ DO CAMPO.
 @PARAM: @message = MENSAGEM.
 @PARAM: @idMessage = ID DA MENSAGEM.
 @PARAM: @isValid = true/false.
-Ex de chamada Cpf inválido: sml_appendMessageField(this, "CPF inválido!", "spanCpfMessage", false);
+Ex de chamada Cpf invalido: sml_appendMessageField(this, "CPF invalido!", "spanCpfMessage", false);
 Ex de chamada Cpf válido: sml_appendMessageField(this, "", "spanCpfMessage", true);
 */
 function sml_appendMessageField(Obj, message, idMessage, isValid) {
@@ -520,7 +520,7 @@ function sml_appendMessageField(Obj, message, idMessage, isValid) {
 }
 
 /*
-Valida o CPF digitado utilizando a função "sml_appendMessageField" para apresentar uma mensagem ao lado do campo se o CPF é válido ou não.
+Valida o CPF digitado utilizando a Funcao "sml_appendMessageField" para apresentar uma mensagem ao lado do campo se o CPF é válido ou nao.
 @PARAM: @Objcpf = OBJ DO CAMPO CPF.
 Ex de chamada: onchange="sml_checkCPF(this);"
 */
@@ -529,7 +529,7 @@ function sml_checkCPF(Objcpf) {
 
     cpf = cpf.replace(/[^\d]+/g, '');
     if (cpf == '') {
-        sml_appendMessageField(Objcpf, "CPF inválido!", "spanCpfMessage", false);
+        sml_appendMessageField(Objcpf, "CPF invalido!", "spanCpfMessage", false);
         Objcpf.value = '';
     }
     // Elimina CPFs invalidos conhecidos    
@@ -544,7 +544,7 @@ function sml_checkCPF(Objcpf) {
         cpf == "77777777777" ||
         cpf == "88888888888" ||
         cpf == "99999999999") {
-        sml_appendMessageField(Objcpf, "CPF inválido!", "spanCpfMessage", false);
+        sml_appendMessageField(Objcpf, "CPF invalido!", "spanCpfMessage", false);
         Objcpf.value = '';
     } else {
 
@@ -558,7 +558,7 @@ function sml_checkCPF(Objcpf) {
         if (rev == 10 || rev == 11)
             rev = 0;
         if (rev != parseInt(cpf.charAt(9))) {
-            sml_appendMessageField(Objcpf, "CPF inválido!", "spanCpfMessage", false);
+            sml_appendMessageField(Objcpf, "CPF invalido!", "spanCpfMessage", false);
             Objcpf.value = '';
         } else {
 
@@ -572,7 +572,7 @@ function sml_checkCPF(Objcpf) {
             if (rev == 10 || rev == 11)
                 rev = 0;
             if (rev != parseInt(cpf.charAt(10))) {
-                sml_appendMessageField(Objcpf, "CPF inválido!", "spanCpfMessage", false);
+                sml_appendMessageField(Objcpf, "CPF invalido!", "spanCpfMessage", false);
                 Objcpf.value = '';
             } else {
                 sml_appendMessageField(Objcpf, "", "spanCpfMessage", true);
@@ -582,7 +582,7 @@ function sml_checkCPF(Objcpf) {
 }
 
 /*
-Valida o CNPJ digitado utilizando a função "sml_appendMessageField" para apresentar uma mensagem ao lado do campo se o CNPJ é válido ou não.
+Valida o CNPJ digitado utilizando a Funcao "sml_appendMessageField" para apresentar uma mensagem ao lado do campo se o CNPJ é válido ou nao.
 @PARAM: @Obj = OBJ DO CAMPO.
 Ex de chamada: onchange="sml_checkCNPJ(this);"
 */
@@ -602,7 +602,7 @@ function sml_checkCNPJ(Obj) {
         || cnpj == "77777777777777"
         || cnpj == "88888888888888"
         || cnpj == "99999999999999") {
-        sml_appendMessageField(Obj, "CNPJ inválido!", "spanCnpjMessage", false);
+        sml_appendMessageField(Obj, "CNPJ invalido!", "spanCnpjMessage", false);
         Obj.value = '';
         return false;
     }
@@ -622,7 +622,7 @@ function sml_checkCNPJ(Obj) {
     var resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
 
     if (resultado != digitos.charAt(0)) {
-        sml_appendMessageField(Obj, "CNPJ inválido!", "spanCnpjMessage", false);
+        sml_appendMessageField(Obj, "CNPJ invalido!", "spanCnpjMessage", false);
         Obj.value = '';
         return false;
     }
@@ -641,7 +641,7 @@ function sml_checkCNPJ(Obj) {
     resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
 
     if (resultado != digitos.charAt(1)) {
-        sml_appendMessageField(Obj, "CNPJ inválido!", "spanCnpjMessage", false);
+        sml_appendMessageField(Obj, "CNPJ invalido!", "spanCnpjMessage", false);
         Obj.value = '';
         return false;
     } else {
@@ -681,21 +681,20 @@ function sml_IsRequired(fieldId, isRequired) {
     } else {
         obj.setAttribute('required', 'N');
         tr.setAttribute("class", "");
-
     }
 }
 
 /*
-Função responsável por esconder/mostrar opções de uma caixa de seleção localizado ou não em uma tabela multi-valorada.
-@PARAM: @selectId = Identificador da Caixa de seleção.
-@PARAM: @selectValues = Opções da caixa de seleção.
+Funcao responsavel por esconder/mostrar opcoes de uma caixa de selecao localizado ou nao em uma tabela multi-valorada.
+@PARAM: @selectId = Identificador da Caixa de selecao.
+@PARAM: @selectValues = opcoes da caixa de selecao.
 @PARAM: @op = operação. Valores: SHOW ou HIDE.
-@PARAM: @hasMultiple = Se a caixa de seleção estiver dentro de uma tabela multi-valorada. Valores do parâmetro: true ou false.
+@PARAM: @hasMultiple = Se a caixa de selecao estiver dentro de uma tabela multi-valorada. Valores do parâmetro: true ou false.
 @PARAM: @tableId = identificador da tabela multi-valorada.
-Ex de chamada com tabela multi-valorada: sml_ShowOrHideSelectOptions("identificador", "Opção 1, Opção 2, Opção 5", "HIDE", true, "tblAlteracoesNoDocumento");
-Ex de chamada com tabela multi-valorada: sml_ShowOrHideSelectOptions("identificador", "Opção 1, Opção 2, Opção 5", "SHOW", true, "tblAlteracoesNoDocumento");
-Ex de chamada sem tabela multi-valorada: sml_ShowOrHideSelectOptions("identificador", "Opção 1, Opção 2, Opção 5", "HIDE", false, "");
-Ex de chamada sem tabela multi-valorada: sml_ShowOrHideSelectOptions("identificador", "Opção 1, Opção 2, Opção 5", "SHOW", false, "");
+Ex de chamada com tabela multi-valorada: sml_ShowOrHideSelectOptions("identificador", "opcao 1, opcao 2, opcao 5", "HIDE", true, "tblAlteracoesNoDocumento");
+Ex de chamada com tabela multi-valorada: sml_ShowOrHideSelectOptions("identificador", "opcao 1, opcao 2, opcao 5", "SHOW", true, "tblAlteracoesNoDocumento");
+Ex de chamada sem tabela multi-valorada: sml_ShowOrHideSelectOptions("identificador", "opcao 1, opcao 2, opcao 5", "HIDE", false, "");
+Ex de chamada sem tabela multi-valorada: sml_ShowOrHideSelectOptions("identificador", "opcao 1, opcao 2, opcao 5", "SHOW", false, "");
  */
 function sml_ShowOrHideSelectOptions(selectId, selectValues, op, hasMultiple, tableId) {
     var tbl;
@@ -709,13 +708,13 @@ function sml_ShowOrHideSelectOptions(selectId, selectValues, op, hasMultiple, ta
             select = row.querySelector('[xname="inp' + selectId + '"]');
 
             if (select && select.length > 0) {
-                //Loop para cada opção do meu select.
+                //Loop para cada opcao do meu select.
                 Array.from(select).forEach(option => {
-                    //Verifica se existe mais de uma opção para ocultar ou mostrar.
+                    //Verifica se existe mais de uma opcao para ocultar ou mostrar.
                     if (selectValues.indexOf(",") >= 0) {
 
                         arrayOptValues = selectValues.split(",");
-                        //Loop para cada opção que desejo esconder.
+                        //Loop para cada opcao que desejo esconder.
                         Array.from(arrayOptValues).forEach(arrayOpt => {
                             if (arrayOpt.toUpperCase() == option.text.toUpperCase()) {
                                 if (op.toUpperCase() == "HIDE") {
@@ -751,13 +750,13 @@ function sml_ShowOrHideSelectOptions(selectId, selectValues, op, hasMultiple, ta
         select = document.querySelector('[xname="inp' + selectId + '"]');
 
         if (select.length > 0) {
-            //Loop para cada opção do meu select.
+            //Loop para cada opãao do meu select.
             Array.from(select).forEach(option => {
-                //Verifica se existe mais de uma opção para ocultar ou mostrar.
+                //Verifica se existe mais de uma opcao para ocultar ou mostrar.
                 if (selectValues.indexOf(",") >= 0) {
 
                     arrayOptValues = selectValues.split(",");
-                    //Loop para cada opção que desejo esconder.
+                    //Loop para cada opcao que desejo esconder.
                     Array.from(arrayOptValues).forEach(arrayOpt => {
                         if (arrayOpt.toUpperCase() == option.text.toUpperCase()) {
                             if (op.toUpperCase() == "HIDE") {
@@ -792,7 +791,7 @@ function sml_ShowOrHideSelectOptions(selectId, selectValues, op, hasMultiple, ta
 }
 
 /*
- Função responsável por formatar o campo em telefone.
+ Funcao responsavel por formatar o campo em telefone.
  @PARAM: @obj = objeto.
  Ex de chamada: onkeyup="this.val(sml_PhoneMask(this));"
  Ex de chamada: onblur="this.val(sml_PhoneMask(this));"
@@ -829,7 +828,7 @@ function sml_PhoneMask(obj) {
 
 /*
 EXEMPLO DE FUNÇÃO PARA CONTROLAR TABELA MULTI-VALORADA AO INSERIR OU REMOVER LINHAS
-Ao adicionar/remover uma linha na tabela multi-valorada, adiciona função de controle nos botões.
+Ao adicionar/remover uma linha na tabela multi-valorada, adiciona Funcao de controle nos botões.
 @PARAM: @tblId = Id tabela.
 Ex de chamada: sml_addFunctionOnInsertAndDeleteTableValue($("table[id='tblRepresentantesLegais']"));
 */
@@ -870,7 +869,7 @@ function sml_addFunctionOnInsertAndDeleteTableValue(tblId) {
         }
     }
     /*
-    Para cada botão de Excluir linha da tabela, adiciona a função de verificar a quantidade de linhas para mostrar o botão de inserir linhas.
+    Para cada botão de Excluir linha da tabela, adiciona a Funcao de verificar a quantidade de linhas para mostrar o botão de inserir linhas.
     @PARAM: @tbl = Objeto tabela.
     */
     function sml_DeleteTableLine(tbl) {
