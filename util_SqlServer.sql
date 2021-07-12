@@ -47,7 +47,7 @@ END
 
 --SCRIPT COM CASE NO SELECT
 DECLARE
-@Idade Int = (SELECT DATEDIFF(YEAR, '11/08/1988', GetDate()))
+@Idade Int = (SELECT DATEDIFF(YEAR, '01/01/1955', GetDate()))
 
 SELECT
 v.CodFlowExecute
@@ -68,17 +68,17 @@ v.CodFlowExecute
 	END
 ) AS DsAttributeValueName
 ,v.TaxaDeIngresso
-FROM (SELECT Max(u.CodFlowExecute) CodFlowExecute, u.Codigo FROM wfUNIMEDSM_TABELA_DE_VENDAS u WITH (NOLOCK) GROUP BY u.Codigo) AS uu
-INNER JOIN wfUNIMEDSM_TABELA_DE_VENDAS v WITH (NOLOCK) ON uu.CodFlowExecute = v.CodFlowExecute
+FROM (SELECT Max(u.CodFlowExecute) CodFlowExecute, u.Codigo FROM wfTabela u WITH (NOLOCK) GROUP BY u.Codigo) AS uu
+INNER JOIN WfTabela v WITH (NOLOCK) ON uu.CodFlowExecute = v.CodFlowExecute
 WHERE 
-v.TipoDePlano = 'Coletivo Por Adesão'
-AND v.Codigo = 'CA2A'
+v.TipoDePlano = 'Plano de saude'
+AND v.Codigo = '123abc'
 ORDER BY CodAttributeCustomValue
 
 
 
 DECLARE
-@Idade Int = (SELECT DATEDIFF(YEAR, '{Formulario.dataDeNascimentoDependente}', GetDate()))
+@Idade Int = (SELECT DATEDIFF(YEAR, '{Formulario.dataDeNascimento}', GetDate()))
 
 SELECT
 v.CodFlowExecute
@@ -99,8 +99,8 @@ v.CodFlowExecute
 	END
 ) AS DsAttributeValueName
 ,v.TaxaDeIngresso
-FROM (SELECT Max(u.CodFlowExecute) CodFlowExecute, u.Codigo FROM wfUNIMEDSM_TABELA_DE_VENDAS u WITH (NOLOCK) GROUP BY u.Codigo) AS uu
-INNER JOIN wfUNIMEDSM_TABELA_DE_VENDAS v WITH (NOLOCK) ON uu.CodFlowExecute = v.CodFlowExecute
+FROM (SELECT Max(u.CodFlowExecute) CodFlowExecute, u.Codigo FROM wfTabela u WITH (NOLOCK) GROUP BY u.Codigo) AS uu
+INNER JOIN wfTabela v WITH (NOLOCK) ON uu.CodFlowExecute = v.CodFlowExecute
 WHERE 
 v.TipoDePlano = '{Formulario.tipoDeContratacao}'
 AND v.Codigo = '{Formulario.produto}'

@@ -1,19 +1,22 @@
 # Codigos Reaproveitaveis SQL, jQuery e Javascript #
 
 ### util_jquery.js ###
-* ARQUIVO CONTENDO DIVERSAS FUNÇÕES EM JQUERY, GENÉRICAS E REAPROVEITÁVEIS PARA DESENVOLVIMENTO DE NOVOS PROJETOS NO ORQUESTRA BPM V3.
+* Arquivo contendo diversas funcoes em jquery, genericas e reaproveitaveis para desenvolvimento de novos projetos no Orquestra BPM V3.
 
 ### util_js_v3.js ###
-* ARQUIVO CONTENDO DIVERSAS FUNÇÕES EM JAVASCRIPT, GENÉRICAS E REAPROVEITÁVEIS PARA DESENVOLVIMENTO DE NOVOS PROJETOS NO ORQUESTRA BPM V3 SEM DEPENDER DE JQUERY.
+* Arquivo contendo diversas funcoes em javascript, genericas e reaproveitaveis para desenvolvimento de novos projetos no Orquestra BPM V3 sem depender de jquery.
 
 ### util_js_v4.js ###
-* ARQUIVO CONTENDO DIVERSAS FUNÇÕES EM JAVASCRIPT, GENÉRICAS E REAPROVEITÁVEIS PARA DESENVOLVIMENTO DE NOVOS PROJETOS NO ORQUESTRA BPM V4 CONTEMPLANDO O NOVO MODO DE EXECUÇÃO 2.0.
+* Arquivo contendo diversas funcoes em javascript, genericas e reaproveitaveis para desenvolvimento de novos projetos no Orquestra BPM V4 contemplando o novo modo de execucao 2.0.
+
+### util_jses6_v4.js ###
+* Arquivo contendo diversas funcoes em javascript, genericas e reaproveitaveis para desenvolvimento de novos projetos no Orquestra BPM V4 contemplando o novo modo de execucao 2.0, no melhor estilo ECMAScript 6.
 
 ### util_Oracle.sql ###
-* SCRIPT PARA DELETAR TAREFAS FANTASMAS DO PROCESSO (ORACLE)
-* ATUALIZA A URL DAS FONTES DE DADOS IMPORTADAS PARA A URL DO AMBIENTE ATUAL (ORACLE).
+* Script para deletar tarefas fantasmas do processo (ORACLE)
+* Atualiza a Url das fontes de dados importadas para a Url do ambiente atual (ORACLE).
 
 ### util_SqlServer.sql ###
-* SCRIPT PARA DELETAR TAREFAS FANTASMAS DO PROCESSO.
-* ATUALIZA A URL DAS FONTES DE DADOS IMPORTADAS PARA A URL DO AMBIENTE ATUAL.
+* Script para deletar tarefas fantasmas do processo.
+* Atualiza a Url das fontes de dados importadas para a Url do ambiente atual.
 
