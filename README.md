@@ -1,4 +1,4 @@
-# Codigos Reaproveitaveis SQL, jQuery e Javascript #
+# Codigos Reaproveitaveis jQuery e Javascript #
 
 ### util_jquery.js ###
 * Arquivo contendo diversas funcoes em jquery, genericas e reaproveitaveis para desenvolvimento de novos projetos no Orquestra BPM V3.
