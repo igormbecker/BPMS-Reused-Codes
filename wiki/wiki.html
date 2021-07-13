@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zeev Wikipedia</title>
+    <style type="text/css">
+      body {
+        color: rgb(240, 240, 240);
+        background-color: rgb(83, 83, 83);
+        font-family: 'Rubik', sans-serif;
+        font-size: 15px;
+      }
+      #title {
+        width: 99.9%;
+        font-family: 'Poppins', sans-serif;
+        /*color: rgb(140, 59, 194);*/
+        text-align: center;
+        font-weight: bold;
+        border: 1px solid gray;
+      }
+      #title:hover {
+          cursor: pointer;
+      }
+      #content {
+        width: 80%;
+        float: right;
+        text-align: center;
+      }
+      #menu {
+        width: 19.7%;
+        margin: 0;
+        padding: 0;
+        float: left;
+        border: 1px solid gray;
+      }
+      #menu ul li {
+        margin: 0;
+        padding: 0px;
+        text-align: left;
+        list-style-type: none;
+      }
+      #menu a:link {
+        color: rgb(240, 240, 240);
+        font-weight: normal;
+        text-decoration: none;
+        padding: 10px;
+        display: block;
+      }
+      #menu a:hover,
+      a:active,
+      a:visited {
+        background-color: rgb(129, 129, 129);
+        color: rgb(240, 240, 240);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="title" onclick="zeev_XhttpLoadPage('index.html');">
+      <h1>Bem-vindo ao Wikipedia do Zeev</h1>
+    </div>
+    <div id="menu">
+      <ul>
+        <li>
+          <a onclick="zeev_XhttpLoadPage('index.html');" href="#">Home</a>
+        </li>          
+        <li>
+          <a onclick="zeev_XhttpLoadPage('page1.html');" href="#">Ocultar/Exibir Campos</a>
+        </li>
+        <li>
+          <a onclick="zeev_XhttpLoadPage('page2.html');" href="#">Ocultar/Exibir Tabelas</a>
+        </li>
+        <li>
+          <a onclick="zeev_XhttpLoadPage('page3.html');" href="#">Ocultar/Exibir Opções de Caixa de Seleção</a>
+        </li>
+        <li>
+          <a onclick="zeev_XhttpLoadPage('page4.html');" href="#">Validação CPF/CNPJ</a>
+        </li>
+        <li>
+          <a onclick="zeev_XhttpLoadPage('page5.html');" href="#">Consultar Fonte de Dados via Ajax</a>
+        </li>
+      </ul>
+    </div>
+    <div id="content">
+    </div>    
+  </body>
+  <script type="text/javascript">
+    function zeev_XhttpLoadPage(url) {
+      var xhttp;
+      var message;
+
+      if (navigator.appName == "Microsoft Internet Explorer")
+        xhttp = new ActiveXObject("Microsoft.XMLHTTP");
+      else xhttp = new XMLHttpRequest();
+
+      if (url !== null && url !== undefined && url !== "") {
+        xhttp.onreadystatechange = function () {
+          if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("content").innerHTML = this.responseText;
+          } else {
+            if (this.readyState == 4 && this.status != 200) {
+              message = `Ocorreu um erro ao executar a consulta.\r\n${this.responseText}`;
+              alert(message);
+            }
+          }
+        };
+        xhttp.open("GET", url, true);
+        xhttp.send();
+      }
+    }
+  </script>
+</html>
